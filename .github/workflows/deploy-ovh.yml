@@ -1,0 +1,86 @@
+name: Déployer sur OVHcloud
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arivoli-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Récupérer le site
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Vérifier le JavaScript
+        run: node --check assets/demo.js
+
+      - name: Vérifier la configuration SFTP
+        id: config
+        env:
+          SFTP_PASSWORD: ${{ secrets.OVH_SFTP_PASSWORD }}
+          SFTP_KNOWN_HOSTS: ${{ vars.OVH_SFTP_KNOWN_HOSTS }}
+        run: |
+          if [[ -z "$SFTP_PASSWORD" || -z "$SFTP_KNOWN_HOSTS" ]]; then
+            echo "::notice::Déploiement en attente de la configuration SFTP décrite dans le README."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Installer le client d’authentification SFTP
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends sshpass
+
+      - name: Transférer les fichiers sur OVHcloud
+        if: steps.config.outputs.ready == 'true'
+        env:
+          SSHPASS: ${{ secrets.OVH_SFTP_PASSWORD }}
+          SFTP_KNOWN_HOSTS: ${{ vars.OVH_SFTP_KNOWN_HOSTS }}
+        run: |
+          known_hosts=$(mktemp)
+          trap 'rm -f "$known_hosts"' EXIT
+          printf '%s\n' "$SFTP_KNOWN_HOSTS" > "$known_hosts"
+
+          sshpass -e sftp -b - \
+            -o BatchMode=no \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$known_hosts" \
+            -o GlobalKnownHostsFile=/dev/null \
+            -o PreferredAuthentications=password,keyboard-interactive \
+            -o ConnectTimeout=15 \
+            -P 22 arivolifth@ftp.cluster129.hosting.ovh.net <<'SFTP'
+          cd www
+          -mkdir assets
+          put assets/arivoli.png assets/.arivoli.png.upload
+          rename assets/.arivoli.png.upload assets/arivoli.png
+          put assets/arivoli.svg assets/.arivoli.svg.upload
+          rename assets/.arivoli.svg.upload assets/arivoli.svg
+          put assets/site.css assets/.site.css.upload
+          rename assets/.site.css.upload assets/site.css
+          put assets/demo.js assets/.demo.js.upload
+          rename assets/.demo.js.upload assets/demo.js
+          put cas-usages.html .cas-usages.html.upload
+          rename .cas-usages.html.upload cas-usages.html
+          put index.html .index.html.upload
+          rename .index.html.upload index.html
+          SFTP
+
+      - name: Vérifier le site publié
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          curl --fail --silent --show-error --max-time 25 "https://arivoli.fr/?revision=$GITHUB_SHA" -o "$RUNNER_TEMP/arivoli-index.html"
+          cmp index.html "$RUNNER_TEMP/arivoli-index.html"
