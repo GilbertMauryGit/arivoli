@@ -32,11 +32,36 @@ jobs:
           SFTP_PASSWORD: ${{ secrets.OVH_SFTP_PASSWORD }}
           SFTP_KNOWN_HOSTS: ${{ vars.OVH_SFTP_KNOWN_HOSTS }}
         run: |
-          if [[ -z "$SFTP_PASSWORD" || -z "$SFTP_KNOWN_HOSTS" ]]; then
-            echo "::notice::Déploiement en attente de la configuration SFTP décrite dans le README."
-            echo "ready=false" >> "$GITHUB_OUTPUT"
+          ready=true
+          if [[ -z "$SFTP_PASSWORD" ]]; then
+            echo "::notice::Le secret OVH_SFTP_PASSWORD est manquant."
+            ready=false
+          fi
+          if [[ -z "$SFTP_KNOWN_HOSTS" ]]; then
+            echo "::notice::La variable OVH_SFTP_KNOWN_HOSTS est manquante."
+            echo "inspect_host=true" >> "$GITHUB_OUTPUT"
+            ready=false
+          fi
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+
+      - name: Relever les clés publiques présentées par le serveur OVHcloud
+        if: steps.config.outputs.inspect_host == 'true'
+        run: |
+          host_keys=$(mktemp)
+          trap 'rm -f "$host_keys"' EXIT
+          ssh-keyscan -T 8 -t ed25519,ecdsa,rsa ftp.cluster129.hosting.ovh.net > "$host_keys" || true
+          if [[ -s "$host_keys" ]]; then
+            {
+              echo '## Clés SSH présentées par OVHcloud'
+              echo 'Comparez leur empreinte à celle d’une connexion SFTP de confiance avant de renseigner OVH_SFTP_KNOWN_HOSTS.'
+              echo
+              echo '~~~text'
+              ssh-keygen -lf "$host_keys"
+              cat "$host_keys"
+              echo '~~~'
+            } >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Le serveur SFTP n’a renvoyé aucune clé publique lors de ce contrôle."
           fi
 
       - name: Installer le client d’authentification SFTP
