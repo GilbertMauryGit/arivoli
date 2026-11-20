@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arivoli — Analytics &amp; performance e-commerce</title>
+  <meta name="description" content="Gilbert Maury, consultant indépendant. Arivoli fiabilise vos données e-commerce, mesure la contribution des médias et éclaire vos décisions d’investissement.">
+  <link rel="canonical" href="https://arivoli.fr/">
+  <meta name="theme-color" content="#490e60">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Arivoli — Analytics &amp; performance e-commerce">
+  <meta property="og:description" content="De la fiabilité du tracking à l’arbitrage des budgets média, avec Gilbert Maury.">
+  <meta property="og:url" content="https://arivoli.fr/">
+  <link rel="icon" href="assets/arivoli.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/demo.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#contenu">Aller au contenu</a>
+  <div class="top" id="accueil">
+    <header class="wrap header">
+      <a href="#accueil" class="brand"><img src="assets/arivoli.png" alt="Arivoli, accueil" width="511" height="130"></a>
+      <nav aria-label="Navigation principale">
+        <a href="#services">Services</a><a href="#cas">Cas d’usage</a><a href="#parcours">Parcours</a><a class="nav-contact" href="#contact">Contact</a>
+      </nav>
+    </header>
+    <main id="contenu">
+      <section class="hero-band" aria-labelledby="hero-title">
+        <div class="wrap hero">
+        <div>
+          <p class="eyebrow">Analytics &amp; performance e-commerce</p>
+          <h1 id="hero-title">Où investir <em>le prochain euro&nbsp;?</em></h1>
+          <p class="hero-copy">Je relie vos dépenses média, vos ventes et votre marge pour décider quels leviers renforcer, quels écarts corriger et comment mesurer l’effet de chaque action.</p>
+          <div class="actions"><a class="button" href="#contact">Parler de votre projet</a><a class="text-link" href="#cas">Voir les cas d’usage</a></div>
+        </div>
+        <figure class="demo" aria-labelledby="demo-title">
+          <figcaption>
+            <p class="eyebrow">Projet Analytics · Données fictives</p>
+            <h2 id="demo-title">Arbitrer un budget média</h2>
+            <p class="demo-intro">Comparez le rendement actuel et celui d’un budget supplémentaire de 1 000&nbsp;€.</p>
+          </figcaption>
+          <fieldset id="channels" hidden>
+            <legend>Canal à simuler</legend>
+            <div class="channels">
+              <label><input type="radio" name="channel" value="search" checked><span>Search</span></label>
+              <label><input type="radio" name="channel" value="social"><span>Social</span></label>
+            </div>
+          </fieldset>
+          <div class="meters">
+            <div><span>ROAS moyen observé</span><strong id="average-value">5,0×</strong><meter id="average-meter" min="0" max="6" value="5" aria-label="ROAS moyen observé"></meter></div>
+            <div><span>ROAS marginal estimé</span><strong id="marginal-value">2,0×</strong><meter id="marginal-meter" min="0" max="6" value="2" aria-label="ROAS marginal estimé"></meter></div>
+          </div>
+          <div class="decision" aria-live="polite" aria-atomic="true">
+            <p><strong id="contribution">−200 €</strong> de contribution estimée après coût média</p>
+            <p id="decision">Search · À ce niveau de rendement, le budget supplémentaire réduirait la contribution.</p>
+          </div>
+          <details class="formula"><summary>Hypothèses du calcul</summary><p>À 40&nbsp;% de marge contributive avant média, la contribution additionnelle vaut 1 000&nbsp;€ × ROAS marginal × 40&nbsp;% − 1 000&nbsp;€. Le seuil de rentabilité marginal est de 2,5×.</p></details>
+        </figure>
+        </div>
+      </section>
+      <div class="expertise"><div class="wrap"><p>Des données à la décision</p><ul><li>Mesure</li><li>Acquisition</li><li>Rentabilité</li><li>Automatisation</li></ul></div></div>
+
+      <section class="wrap section" id="services" aria-labelledby="services-title">
+        <div class="section-heading"><p class="eyebrow">Services</p><h2 id="services-title">De la mesure à l’arbitrage</h2><p>Pour les directions e-commerce, les équipes marketing et leurs agences.</p></div>
+        <div class="services">
+          <article><h3>Fiabiliser la mesure</h3><p>Auditer le tracking GA4 et rapprocher les données média, analytics, CRM et ventes. Documenter les écarts et prioriser les corrections.</p></article>
+          <article><h3>Comprendre la contribution des leviers</h3><p>Analyser les parcours, les conversions et la contribution du paid et de l’organique. Cadrer un test d’incrémentalité lorsque le volume et le contexte le permettent.</p></article>
+          <article><h3>Arbitrer les investissements</h3><p>Comparer le rendement marginal des canaux et des marchés, puis traduire l’analyse en décisions budgétaires suivies dans le temps.</p></article>
+          <article><h3>Automatiser les analyses</h3><p>Connecter les sources, automatiser les contrôles et le reporting, puis prototyper des outils d’analyse et des copilotes IA adaptés aux équipes.</p></article>
+        </div>
+      </section>
+
+      <section class="cases" id="cas" aria-labelledby="cases-title">
+        <div class="wrap section case-layout">
+          <div class="section-heading"><p class="eyebrow">Cas d’usage</p><h2 id="cases-title">Des décisions à éclairer</h2><p>Exemples anonymisés issus du projet Analytics.</p></div>
+          <div class="case-list">
+            <details open>
+              <summary><span><small>Notoriété &amp; incrémentalité</small>Que génère une campagne de notoriété&nbsp;?</span></summary>
+              <div class="case-copy"><p>Rapprocher la pression média, les recherches de marque, les visites qualifiées et les ventes en tenant compte des délais de conversion et de la saisonnalité.</p><p><strong>Décision.</strong> Identifier les signaux à suivre et, si les volumes le permettent, définir un test avec groupe témoin pour estimer l’effet incrémental.</p></div>
+            </details>
+            <details>
+              <summary><span><small>Shopping &amp; acquisition</small>Quels produits méritent plus de budget&nbsp;?</span></summary>
+              <div class="case-copy"><p>Croiser le catalogue, le statut des produits dans le flux Shopping, les coûts et les ventes. Repérer les références mal diffusées et celles dont l’investissement mérite d’être testé.</p><p><strong>Décision.</strong> Prioriser les corrections du flux et l’allocation du prochain budget en fonction de la marge.</p></div>
+            </details>
+            <details>
+              <summary><span><small>Tracking &amp; qualité des données</small>Pourquoi les conversions divergent-elles&nbsp;?</span></summary>
+              <div class="case-copy"><p>Rapprocher les identifiants de commande et les montants entre analytics et ventes, puis qualifier les écarts de suivi ou de périmètre.</p><p><strong>Décision.</strong> Corriger les causes identifiées et automatiser les contrôles qui permettent de détecter leur réapparition.</p></div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap section career" id="parcours" aria-labelledby="career-title">
+        <div class="section-heading"><p class="eyebrow">Parcours</p><h2 id="career-title">Gilbert Maury</h2><p>Consultant indépendant depuis 2019, j’associe stratégie média, analyse de données et mise en œuvre technique. Basé près de Marseille, j’interviens à Paris et à distance.</p><a class="text-link" href="https://www.linkedin.com/in/gilbertmaury/">Consulter mon profil LinkedIn</a></div>
+        <dl class="timeline">
+          <div><dt>Depuis 2019</dt><dd><h3>Arivoli</h3><p>Performance e-commerce et qualité des données pour Diptyque, coordination digitale pour BMW / Mediaplus et automatisation du reporting pour Sephora.</p></dd></div>
+          <div><dt>2020–2022</dt><dd><h3>Yugo · Direction digitale et technique</h3><p>Architecture et développement d’une plateforme de réservation de vols, coordination des partenaires et encadrement de l’équipe technique.</p></dd></div>
+          <div><dt>2018</dt><dd><h3>OMD EMEA · Digital Media Europe</h3><p>Direction de l’équipe centrale de performance digitale pour Nissan Europe et coordination sur 24 marchés.</p></dd></div>
+          <div><dt>2006–2017</dt><dd><h3>Mindshare puis KR Media</h3><p>Conseil en stratégie média digitale, pilotage des investissements et management d’équipes.</p></dd></div>
+        </dl>
+      </section>
+
+      <section class="contact" id="contact" aria-labelledby="contact-title">
+        <div class="wrap contact-layout">
+          <div><p class="eyebrow">Contact</p><h2 id="contact-title">Quelle décision cherchez-vous à prendre&nbsp;?</h2></div>
+          <div><p>Parlons de vos données, de vos leviers d’acquisition ou du prochain budget à arbitrer.</p><a class="button" href="https://www.linkedin.com/in/gilbertmaury/">Contacter Gilbert sur LinkedIn</a></div>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap footer"><a href="#accueil" class="brand"><img src="assets/arivoli.png" alt="Arivoli, retour en haut" width="511" height="130"></a><p>Arivoli · Gilbert Maury</p></footer>
+  </div>
+</body>
+</html>
