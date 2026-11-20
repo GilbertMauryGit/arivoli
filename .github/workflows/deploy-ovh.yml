@@ -80,8 +80,7 @@ jobs:
           trap 'rm -f "$known_hosts"' EXIT
           printf '%s\n' "$SFTP_KNOWN_HOSTS" > "$known_hosts"
 
-          sshpass -e sftp -b - \
-            -o BatchMode=no \
+          sshpass -e sftp -o BatchMode=no -b - \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$known_hosts" \
             -o GlobalKnownHostsFile=/dev/null \
