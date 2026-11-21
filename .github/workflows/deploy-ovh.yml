@@ -101,6 +101,10 @@ jobs:
           rename .gilbert-maury.html.upload gilbert-maury.html
           put cas-usages.html .cas-usages.html.upload
           rename .cas-usages.html.upload cas-usages.html
+          put sitemap.xml .sitemap.xml.upload
+          rename .sitemap.xml.upload sitemap.xml
+          put robots.txt .robots.txt.upload
+          rename .robots.txt.upload robots.txt
           put index.html .index.html.upload
           rename .index.html.upload index.html
           SFTP
@@ -108,7 +112,7 @@ jobs:
       - name: Vérifier le site publié
         if: steps.config.outputs.ready == 'true'
         run: |
-          for page in index.html priorites.html gilbert-maury.html; do
+          for page in index.html priorites.html gilbert-maury.html robots.txt sitemap.xml; do
             public_path="$page"
             if [[ "$page" == index.html ]]; then public_path=""; fi
             curl --location --fail --silent --show-error --max-time 25 "https://arivoli.fr/$public_path?revision=$GITHUB_SHA" -o "$RUNNER_TEMP/live.html"
