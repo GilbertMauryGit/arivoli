@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
 
       - name: Vérifier le JavaScript
-        run: node --check assets/demo.js
+        run: node --check assets/cohorte.js
 
       - name: Vérifier la configuration SFTP
         id: config
@@ -89,14 +89,16 @@ jobs:
             -P 22 arivolifth@ftp.cluster129.hosting.ovh.net <<'SFTP'
           cd www
           -mkdir assets
-          put assets/arivoli.png assets/.arivoli.png.upload
-          rename assets/.arivoli.png.upload assets/arivoli.png
           put assets/arivoli.svg assets/.arivoli.svg.upload
           rename assets/.arivoli.svg.upload assets/arivoli.svg
-          put assets/site.css assets/.site.css.upload
-          rename assets/.site.css.upload assets/site.css
-          put assets/demo.js assets/.demo.js.upload
-          rename assets/.demo.js.upload assets/demo.js
+          put assets/editorial.css assets/.editorial.css.upload
+          rename assets/.editorial.css.upload assets/editorial.css
+          put assets/cohorte.js assets/.cohorte.js.upload
+          rename assets/.cohorte.js.upload assets/cohorte.js
+          put priorites.html .priorites.html.upload
+          rename .priorites.html.upload priorites.html
+          put gilbert-maury.html .gilbert-maury.html.upload
+          rename .gilbert-maury.html.upload gilbert-maury.html
           put cas-usages.html .cas-usages.html.upload
           rename .cas-usages.html.upload cas-usages.html
           put index.html .index.html.upload
@@ -106,5 +108,7 @@ jobs:
       - name: Vérifier le site publié
         if: steps.config.outputs.ready == 'true'
         run: |
-          curl --fail --silent --show-error --max-time 25 "https://arivoli.fr/?revision=$GITHUB_SHA" -o "$RUNNER_TEMP/arivoli-index.html"
-          cmp index.html "$RUNNER_TEMP/arivoli-index.html"
+          for page in index.html priorites.html gilbert-maury.html; do
+            curl --fail --silent --show-error --max-time 25 "https://arivoli.fr/$page?revision=$GITHUB_SHA" -o "$RUNNER_TEMP/live.html"
+            cmp "$page" "$RUNNER_TEMP/live.html"
+          done

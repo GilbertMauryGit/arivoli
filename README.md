@@ -2,14 +2,9 @@
 
 Vitrine de Gilbert Maury, consultant Analytics et performance e-commerce. Cible de production : https://arivoli.fr/.
 
-## Modifier le site depuis ChatGPT ou GitHub
+## Modifier le site
 
-- Pour un service, ajoutez une balise `<article>` dans `#services` dans `index.html`.
-- Pour un cas d’usage, ajoutez un bloc `<details>` dans la liste de `#cas`. Indiquez le contexte, la décision et, si des résultats sont publiables, le périmètre et la méthode de mesure.
-- Pour modifier la démonstration, éditez les scénarios fictifs dans `assets/demo.js`. Le scénario Search initial est également dans `index.html` pour fonctionner sans JavaScript.
-- Les couleurs de la charte sont définies au début de `assets/site.css`.
-
-Vous pouvez demander dans ChatGPT « Ajoute ce cas d’usage à arivoli, vérifie le rendu et pousse sur main ». Une fois GitHub Actions configuré, chaque push sur `main` déclenche le déploiement chez OVHcloud. Un commit sur une autre branche permet de préparer un changement avant fusion.
+La page d’accueil et son simulateur utilisent `index.html` et `assets/cohorte.js`. Les interventions et la rubrique des futurs cas d’usage se trouvent dans `priorites.html`. Les références de Gilbert Maury figurent dans `gilbert-maury.html`. Le contact public passe par LinkedIn. Les styles et la palette se trouvent dans `assets/editorial.css`.
 
 ## Aperçu local
 
