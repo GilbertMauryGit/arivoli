@@ -18,3 +18,6 @@
 .note p{max-width:70ch}.equation{background:#f1e7dc;border-left:4px solid #b26136;padding:1rem 1.2rem;margin:1.25rem 0;font-size:.98rem}
 .example{margin-top:1rem;color:#543f50;font-style:italic}
 @media(max-width:760px){.notebook{grid-template-columns:1fr}.notebook aside nav{position:static}.note{padding-bottom:2rem}}
+
+.bar .languages{width:auto;justify-content:flex-start;gap:.8rem}.languages a{font-weight:400}.languages [aria-current]{font-weight:700}
+:lang(zh-Hans):is(h1,h2,.label){letter-spacing:normal;line-height:1.2}
