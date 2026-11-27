@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arivoli Analytics | Comment réfléchir à un budget publicitaire</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #0b1120;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding: 20px;
+    }
+
+    .container { max-width: 1340px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .brand h1 { font-size: 1.28rem; font-weight: 700; }
+    .brand p { color: var(--muted); font-size: 0.86rem; }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .tab-btn {
+      background: var(--panel);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 9px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.86rem;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+    .tab-btn.active { background: var(--accent); color: #062033; border-color: var(--accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 315px 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 1020px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .card h2 { font-size: 1rem; margin-bottom: 14px; }
+
+    .control { margin-bottom: 14px; }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      margin-bottom: 5px;
+      gap: 8px;
+    }
+    .control-header span:last-child { font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+    input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+    input[type="number"], select, input[type="text"] {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 0.84rem;
+    }
+    input[type="number"] {
+      width: 84px;
+      text-align: right;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    input[type="number"]:focus, select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    select { width: 100%; margin-bottom: 14px; padding: 8px; font-weight: 600; }
+
+    .pill-group { display: flex; gap: 6px; margin-bottom: 14px; }
+    .pill-btn {
+      flex: 1;
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .pill-btn:hover { color: var(--text); }
+    .pill-btn.active {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .kpi {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .kpi .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi .value { font-size: 1.32rem; font-weight: 700; margin-top: 3px; }
+    .kpi .sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    .pos { color: var(--accent-2); }
+    .neg { color: var(--danger); }
+    .warn { color: var(--warn); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { color: var(--muted); font-weight: 600; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    tr.halo-row td { background: rgba(56, 189, 248, 0.07); color: #bae6fd; }
+    tr.total-row td { font-weight: 700; border-top: 2px solid var(--border); background: rgba(11, 17, 32, 0.65); }
+
+    .tag-funnel {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #0b1120;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .badge-ok { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
+    .badge-warn { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
+    .badge-bad { background: rgba(239, 68, 68, 0.16); color: #f87171; }
+
+    canvas {
+      width: 100%;
+      height: 315px;
+      background: var(--panel-2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    /* FICHES DÉCISION EN COLONNE VERTICALE (1, 2, 3...) TYPE TO-DO */
+    .todo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .todo-row {
+      display: grid;
+      grid-template-columns: 36px 24px 1fr auto;
+      align-items: start;
+      gap: 12px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      transition: opacity 0.15s ease, border-color 0.15s ease;
+    }
+    .todo-row.done { opacity: 0.55; border-color: #1e293b; }
+    .todo-row.done .todo-action { text-decoration: line-through; color: var(--muted); }
+
+    @media (max-width: 760px) {
+      .todo-row { grid-template-columns: 32px 24px 1fr; }
+      .todo-meta { grid-column: 3; }
+    }
+
+    .todo-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--accent);
+      color: #062033;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .todo-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-top: 6px;
+      accent-color: var(--accent-2);
+      cursor: pointer;
+    }
+
+    .todo-action {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .todo-detail {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .todo-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .meta-pill {
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .add-todo-form {
+      display: grid;
+      grid-template-columns: 1fr 220px 150px auto;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 820px) { .add-todo-form { grid-template-columns: 1fr; } }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #062033;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+
+    .note { margin-top: 12px; font-size: 0.81rem; color: var(--muted); }
+    :root {
+      --bg: #130f1b;
+      --panel: #201a2d;
+      --panel-2: #191423;
+      --border: #3b314a;
+      --text: #faf7ff;
+      --muted: #c0b5ce;
+      --accent: #c6a8ff;
+      --accent-2: #8fdfbb;
+      --danger: #ff9c93;
+      --warn: #ffbf8f;
+    }
+
+    body { padding: clamp(16px, 3vw, 38px); }
+    .container { max-width: 1200px; }
+    header { gap: 16px; margin-bottom: 26px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; }
+    .brand-mark { width: 12px; height: 12px; background: var(--accent); transform: rotate(45deg); border-radius: 3px; }
+    .tab-btn { background: transparent; }
+    .tab-btn.active, .btn-primary { color: #221633; }
+    .pill-btn.active, tr.halo-row td { background: #302340; color: var(--accent); }
+    .grid-2 > *, .demo-grid > * { min-width: 0; }
+    .tag-funnel { background: var(--panel-2); }
+    .todo-meta { white-space: normal; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    .demo-intro { margin-bottom: 23px; }
+    .demo-context { display: inline-block; color: var(--accent); font-size: .77rem; font-weight: 700; margin-bottom: 8px; }
+    .demo-intro h1 { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -.045em; max-width: 24ch; }
+    .demo-intro p, .demo-hint { color: var(--muted); font-size: .91rem; margin-top: 8px; }
+    .demo-grid { display: grid; grid-template-columns: minmax(245px, .8fr) minmax(0, 2fr); gap: 14px; }
+    .demo-controls, .demo-results, .demo-next { border: 1px solid var(--border); border-radius: 15px; padding: clamp(14px, 2.2vw, 24px); }
+    .demo-controls { background: var(--panel); }
+    .demo-results { background: linear-gradient(135deg, #2c2140, #1b1527 75%); }
+    .demo-grid h2, .demo-next h2 { font-size: 1rem; }
+    .demo-controls .control { margin: 16px 0; }
+    .demo-controls label { font-weight: 650; }
+    .demo-controls output { color: var(--accent); font-size: .83rem; font-weight: 750; white-space: nowrap; }
+    .demo-controls .demo-hint { font-size: .79rem; margin: 3px 0 0; }
+    .demo-controls details { border-top: 1px solid var(--border); padding-top: 12px; }
+    summary { cursor: pointer; color: var(--accent); font-weight: 650; font-size: .85rem; }
+    .demo-signals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 12px 0 8px; }
+    .demo-signal { background: var(--panel-2); border: 1px solid var(--border); border-radius: 9px; padding: 10px; }
+    .demo-signal span { display: block; color: var(--muted); font-size: .75rem; }
+    .demo-signal strong { display: block; font-size: clamp(1rem, 2vw, 1.55rem); font-variant-numeric: tabular-nums; line-height: 1.3; }
+    .demo-verdict { color: var(--muted); font-size: .85rem; margin-top: 10px; min-height: 2.5em; }
+    .demo-next { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; margin-top: 14px; background: var(--panel); }
+    .demo-next p { margin-top: 4px; color: var(--muted); font-size: .85rem; }
+    .demo-next .btn-primary { padding: 10px 14px; }
+    .demo-pilot { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; font-size: .85rem; }
+    .demo-pilot dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 0; }
+    .demo-pilot dt { color: var(--text); font-weight: 650; }
+    .demo-pilot dd { color: var(--muted); }
+    @media (max-width: 760px) {
+      .demo-grid, .demo-next { grid-template-columns: 1fr; }
+      .demo-next .btn-primary { justify-self: start; }
+      .demo-signal { padding: 7px; }
+    }
+    .demo-intro h1 { max-width: 31ch; }
+    .demo-presets { display: flex; gap: 7px; }
+    .demo-breakeven { margin: 15px 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; }
+    .demo-breakeven span { display: block; font-size: .76rem; color: var(--muted); }
+    .demo-breakeven strong { color: var(--accent-2); }
+    .demo-figure { margin: 10px 0 0; }
+    #traction-chart { height: 255px; border: none; background: transparent; }
+    .demo-legend { display: flex; gap: 6px 14px; flex-wrap: wrap; color: var(--muted); font-size: .72rem; }
+    .demo-legend span { display: inline-flex; gap: 6px; align-items: center; }
+    .demo-legend i { width: 14px; border-top: 2px solid var(--accent); }
+    .demo-legend .legend-dashed { border-top: 2px dashed var(--muted); }
+    .demo-legend .legend-threshold { border-color: var(--warn); width: 8px; }
+    .demo-legend .legend-break { width: 7px; height: 7px; border: 1px solid var(--accent-2); border-radius: 50%; }
+    .demo-signal small { color: var(--muted); display: block; font-size: .7rem; }
+    @media (max-width: 500px) {
+      #traction-chart { height: 220px; }
+      .demo-grid { gap: 10px; }
+    }
+  a {color:var(--accent)}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Arivoli Analytics</div>
+      <nav class="tabs" aria-label="Vues du simulateur">
+        <button class="tab-btn active" data-tab="demo" aria-pressed="true">Démo</button>
+        <button class="tab-btn" data-tab="funnel" aria-pressed="false">Budget par canal</button>
+        <button class="tab-btn" data-tab="saturation" aria-pressed="false">Le prochain euro</button>
+        <button class="tab-btn" data-tab="fiche" aria-pressed="false">Questions à discuter</button>
+      </nav>
+    </header>
+
+    <section id="demo" class="tab-panel active" aria-labelledby="demo-title">
+      <div class="demo-intro">
+        <span class="demo-context">E-commerce premium · Cas fictif · Budget mensuel</span>
+        <h1 id="demo-title">Quand la notoriété commence-t-elle à créer de la demande&nbsp;?</h1>
+        <p>Une marque fictive souhaite se faire connaître. Que change le choix entre déplacer un budget existant et ajouter de l’argent ?</p>
+      </div>
+
+      <div class="demo-grid">
+        <aside class="demo-controls">
+          <h2>Investissement en notoriété</h2>
+          <label for="funding">Financement</label>
+          <select id="funding"><option value="transfer" selected>Prendre sur les autres canaux</option><option value="extra">Augmenter le budget total</option></select>
+          <p id="allocation" class="demo-hint"></p>
+          <div class="control">
+            <div class="control-header">
+              <label for="demo-budget">Budget de notoriété</label>
+              <output id="demo-budget-value" for="demo-budget"></output>
+            </div>
+            <input type="range" id="demo-budget" min="0" max="24000" step="500" value="6000">
+          </div>
+          <div class="demo-presets" aria-label="Budgets de démonstration">
+            <button type="button" id="demo-before" class="pill-btn">Avant le seuil</button>
+            <button type="button" id="demo-after" class="pill-btn">Après le seuil</button>
+          </div>
+          <div class="control">
+            <div class="control-header">
+              <label for="demo-threshold">Début supposé de l’effet indirect</label>
+              <output id="demo-threshold-value" for="demo-threshold"></output>
+            </div>
+            <input type="range" id="demo-threshold" min="4000" max="20000" step="500" value="8000" aria-describedby="demo-threshold-help">
+            <p class="demo-hint" id="demo-threshold-help">Au-delà de ce montant fictif, la campagne commence aussi à aider les autres canaux à vendre.</p>
+          </div>
+          <div class="demo-breakeven">
+            <span>Retour au niveau de départ</span>
+            <strong id="demo-breakeven"></strong>
+            <p class="demo-hint">À ce montant, la marge après publicité retrouve celle du scénario sans campagne de notoriété.</p>
+          </div>
+          <details>
+            <summary>Hypothèses du cas fictif</summary>
+            <p class="demo-hint">Dans cet exemple, 100 € de ventes laissent 45 € avant publicité. Les ventes directes par euro de notoriété restent fixes. Au-delà du seuil choisi, les autres canaux peuvent vendre davantage par euro dépensé (jusqu’à +18 %) et attirer une plus grande part de nouveaux clients (jusqu’à +12 points). La demande supplémentaire peut atteindre 25 %. Pour estimer les visites, on suppose 2,5 achats pour 100 visites et un panier moyen de 125 €.</p>
+          </details>
+        </aside>
+
+        <div class="demo-results">
+          <h2>Que reste-t-il une fois la publicité payée ?</h2>
+          <figure class="demo-figure">
+            <canvas id="traction-chart" aria-label="Courbe de contribution simulée selon le budget de notoriété" aria-describedby="demo-verdict"></canvas>
+            <figcaption class="demo-legend">
+              <span><i class="legend-solid"></i>Avec les effets indirects</span>
+              <span><i class="legend-dashed"></i>Avec les seules ventes directes</span>
+              <span><i class="legend-threshold"></i>Début de l’effet indirect</span>
+              <span><i class="legend-break"></i>Retour au niveau de départ</span>
+            </figcaption>
+          </figure>
+          <div class="demo-signals" aria-label="Résultats simulés">
+            <div class="demo-signal"><span>Écart de marge après publicité</span><strong id="demo-contribution"></strong></div>
+            <div class="demo-signal"><span>Visites supplémentaires</span><strong id="demo-visits"></strong></div>
+            <div class="demo-signal"><span>Coût par nouveau client sur Google hors recherches de marque</span><strong id="demo-search-cpa"></strong><small id="demo-search-baseline"></small></div>
+          </div>
+          <p id="demo-verdict" class="demo-verdict" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="demo-next">
+        <div>
+          <h2>Et dans votre équipe, comment se décide ce budget ?</h2>
+          <p>Quel signe vous donnerait envie de poursuivre une campagne de notoriété quand ses ventes directes sont encore faibles ?</p>
+          <div class="demo-pilot" id="demo-pilot" hidden>
+            <dl>
+              <dt>Budget</dt><dd>Lors de votre dernier lancement, d’où venait le budget ?</dd>
+              <dt>Demande</dt><dd>Avez-vous vu davantage de personnes chercher la marque ou revenir sur le site ?</dd>
+              <dt>Rentabilité</dt><dd>Combien de temps laissez-vous à une campagne avant de juger ce qu’elle rapporte ?</dd>
+            </dl>
+          </div>
+        </div>
+        <button type="button" id="pilot-button" class="btn-primary" aria-expanded="false" aria-controls="demo-pilot">Ouvrir la discussion</button>
+      </div>
+    </section>
+
+    <!-- ONGLET 1 : COMPOSITION CANAL x FUNNEL + POAS + TRIPLE HALO -->
+    <section id="funnel" class="tab-panel">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Que coûte une vente dans cet exemple ?</h2>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Coûts hors publicité, en % des ventes</span>
+              <span id="v-costs"></span>
+            </div>
+            <input type="range" id="costs" min="25" max="80" step="1" value="55" />
+            <div class="note" style="margin-top: 3px;">Produit, logistique, retours, remises et frais (avant dépense média).</div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border); margin: 16px 0;" />
+          <h2 style="font-size: 0.92rem; color: var(--accent);">Quels effets indirects peut-on imaginer ?</h2>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Demande supplémentaire</span>
+              <span id="v-halo-vol"></span>
+            </div>
+            <input type="range" id="halo-vol" min="0" max="30" step="1" value="12" />
+          </div>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Ventes par euro dépensé sur les autres canaux</span>
+              <span id="v-halo-eff"></span>
+            </div>
+            <input type="range" id="halo-eff" min="0" max="25" step="1" value="10" />
+          </div>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Hausse de la part de nouveaux clients</span>
+              <span id="v-halo-nc"></span>
+            </div>
+            <input type="range" id="halo-nc" min="0" max="20" step="1" value="8" />
+          </div>
+
+          <button id="reset-mix" class="pill-btn" style="width: 100%; margin-top: 6px;">Revenir aux budgets et rendements de départ</button>
+        </div>
+
+        <div class="card">
+          <h2>Que change la répartition du budget ?</h2>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Budget Média Total</div>
+              <div class="value" id="k-spend"></div>
+              <div class="sub">Somme des canaux</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Ventes par euro de publicité</div>
+              <div class="value" id="k-roas"></div>
+              <div class="sub" id="k-rev">Revenu total généré</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Part de nouveaux clients</div>
+              <div class="value" id="k-nc-share"></div>
+              <div class="sub" id="k-nc-cpa">Coût par nouveau client</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Marge après publicité</div>
+              <div class="value" id="k-profit"></div>
+              <div class="sub" id="k-poas-ratio">Après coûts variables et dépenses média</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Canal</th>
+                  <th>Rôle du canal</th>
+                  <th class="num">Budget (€)</th>
+                  <th class="num">Ventes par euro au départ</th>
+                  <th class="num">Avec effet indirect</th>
+                  <th class="num">Part des ventes due à la publicité</th>
+                  <th class="num">Nouveaux clients (%)</th>
+                  <th class="num">Marge après publicité (€)</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody id="mix-rows"></tbody>
+              <tfoot id="mix-total"></tfoot>
+            </table>
+          </div>
+
+          <p class="note">
+            <strong>Comment lire le tableau ?</strong> La marge tient compte des ventes que l’exemple attribue à la publicité, des coûts de vente et du budget dépensé. Essayez de ramener le budget de notoriété à zéro et regardez aussi les autres lignes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ONGLET 2 : SATURATION & COÛT INCRÉMENTAL PAR FENÊTRE -->
+    <section id="saturation" class="tab-panel">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Que rapporte la prochaine tranche de budget ?</h2>
+
+          <div class="control-header"><span>Canal de l’exemple</span></div>
+          <select id="sat-channel">
+            <option value="shopping">Google Shopping / PMax — Hors-Marque</option>
+            <option value="search">Google Search — Hors-Marque</option>
+            <option value="social">Meta / Social — Acquisition</option>
+          </select>
+
+          <div class="control-header"><span>Période</span></div>
+          <div class="pill-group" id="window-selector">
+            <button class="pill-btn active" data-win="month">1 Mois</button>
+            <button class="pill-btn" data-win="week">1 Semaine</button>
+            <button class="pill-btn" data-win="day">1 Jour</button>
+          </div>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Budget atteint dans l’exemple</span>
+              <span id="v-step-spend"></span>
+            </div>
+            <input type="range" id="step-spend" min="1" max="20" step="1" value="11" />
+          </div>
+
+          <div class="control">
+            <div class="control-header">
+              <span>Ventes souhaitées par euro supplémentaire</span>
+              <span id="v-roas-floor"></span>
+            </div>
+            <input type="range" id="roas-floor" min="1.5" max="4.5" step="0.1" value="2.8" />
+          </div>
+
+          <div class="kpis" style="margin-top: 12px;">
+            <div class="kpi">
+              <div class="label">Ventes par euro supplémentaire</div>
+              <div class="value" id="k-mroas"></div>
+              <div class="sub" id="k-stop-msg"></div>
+            </div>
+            <div class="kpi">
+              <div class="label">Coût d’une vente supplémentaire</div>
+              <div class="value" id="k-mcpa"></div>
+              <div class="sub" id="k-mpoas">Marge de cette tranche</div>
+            </div>
+          </div>
+
+          <p class="note">
+            Les courbes fictives sont distinctes selon la fenêtre choisie. La vue jour illustre un décrochage que des moyennes peuvent masquer.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 id="sat-chart-title">Que rapporte chaque tranche de budget ?</h2>
+          <canvas id="satCanvas" width="760" height="315"></canvas>
+          <p class="note">
+            La courbe bleue additionne les ventes supplémentaires. La courbe orange indique ce que rapporte chaque euro de la dernière tranche. La zone rouge commence quand ce rendement passe sous le repère choisi.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ONGLET 3 : FICHES DÉCISION EN COLONNE (1, 2, 3...) STYLE TO-DO -->
+    <section id="fiche" class="tab-panel">
+      <div class="card">
+        <h2>Quelles questions cet exemple soulève-t-il ?</h2>
+
+        <p class="note" style="margin: 0 0 14px;">Choisissez une question pour lancer la discussion, ou ajoutez la vôtre.</p>
+        <div class="todo-stack" id="todo-stack"></div>
+
+        <form class="add-todo-form" id="add-todo-form">
+          <input type="text" id="new-action" placeholder="Une question à discuter…" required />
+          <input type="text" id="new-guard" placeholder="Quel chiffre regarder ?" required />
+          <input type="text" id="new-owner" placeholder="Avec qui et quand ?" required />
+          <button type="submit" class="btn-primary">+ Ajouter</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const fmtEur = (n) =>
+      new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+
+    // Onglets
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach((b) => {
+          b.classList.toggle("active", b === btn);
+          b.setAttribute("aria-pressed", String(b === btn));
+        });
+        document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+        document.getElementById(btn.dataset.tab).classList.add("active");
+        if (btn.dataset.tab === "saturation") drawSaturation();
+      });
+    });
+
+    // =========================================================================
+    // ONGLET 1 : COMPOSITION CANAL x FUNNEL + POAS + TRIPLE HALO
+    // =========================================================================
+    const defaultChannels = [
+      { channel: "Meta / Vidéo", funnel: "Awareness", spend: 12000, roas: 1.4, inc: 0.92, baseNc: 0.82, aov: 115, isAwareness: true },
+      { channel: "Meta / Social", funnel: "Considération", spend: 10000, roas: 2.7, inc: 0.78, baseNc: 0.68, aov: 120, isAwareness: false },
+      { channel: "Google Shopping / PMax", funnel: "Conversion Hors-Marque", spend: 18000, roas: 4.1, inc: 0.74, baseNc: 0.61, aov: 130, isAwareness: false },
+      { channel: "Google Search", funnel: "Conversion Hors-Marque", spend: 9000, roas: 3.7, inc: 0.80, baseNc: 0.65, aov: 125, isAwareness: false },
+      { channel: "Google Search", funnel: "Conversion Marque", spend: 6000, roas: 8.5, inc: 0.22, baseNc: 0.28, aov: 135, isAwareness: false }
+    ];
+
+    let channelsState = JSON.parse(JSON.stringify(defaultChannels));
+
+    const fEls = {
+      costs: document.getElementById("costs"),
+      haloVol: document.getElementById("halo-vol"),
+      haloEff: document.getElementById("halo-eff"),
+      haloNc: document.getElementById("halo-nc")
+    };
+
+    function renderMixTable() {
+      const tbody = document.getElementById("mix-rows");
+      tbody.innerHTML = channelsState.map((row, idx) => `
+        <tr>
+          <td><strong>${row.channel}</strong></td>
+          <td><span class="tag-funnel">${({"Awareness":"Notoriété","Conversion Hors-Marque":"Ventes hors recherches de marque","Conversion Marque":"Ventes sur recherches de marque"}[row.funnel] || row.funnel)}</span></td>
+          <td class="num">
+            <input type="number" class="in-spend" data-idx="${idx}" min="0" step="500" value="${row.spend}" />
+          </td>
+          <td class="num">
+            <input type="number" class="in-roas" data-idx="${idx}" min="0" max="25" step="0.1" value="${row.roas}" />
+          </td>
+          <td class="num" id="cell-roas-eff-${idx}"></td>
+          <td class="num">${Math.round(row.inc * 100)}%</td>
+          <td class="num" id="cell-nc-${idx}"></td>
+          <td class="num" id="cell-poas-${idx}"></td>
+          <td id="cell-badge-${idx}"></td>
+        </tr>
+      `).join("") + `
+        <tr class="halo-row" id="halo-vol-row">
+          <td><strong>Demande supplémentaire</strong></td>
+          <td><span class="tag-funnel">Demande induite</span></td>
+          <td class="num">0 €</td>
+          <td class="num">—</td>
+          <td class="num" id="cell-halo-rev"></td>
+          <td class="num">85%</td>
+          <td class="num" id="cell-halo-nc"></td>
+          <td class="num pos" id="cell-halo-poas"></td>
+          <td><span class="badge badge-ok">Volume simulé</span></td>
+        </tr>
+      `;
+
+      document.querySelectorAll(".in-spend").forEach((inp) => {
+        inp.addEventListener("input", (e) => {
+          const i = Number(e.target.dataset.idx);
+          channelsState[i].spend = Math.max(0, Number(e.target.value) || 0);
+          recalcMix();
+        });
+      });
+
+      document.querySelectorAll(".in-roas").forEach((inp) => {
+        inp.addEventListener("input", (e) => {
+          const i = Number(e.target.dataset.idx);
+          channelsState[i].roas = Math.max(0, Number(e.target.value) || 0);
+          recalcMix();
+        });
+      });
+
+      recalcMix();
+    }
+
+    function getNetMarginRate() {
+      return 1 - Number(fEls.costs.value) / 100;
+    }
+
+    function calculateMix(channels, { netMargin, haloVol, haloEff, haloNc, haloResponse, haloRevenueBase }) {
+      const awarenessSpend = channels
+        .filter((row) => row.isAwareness)
+        .reduce((sum, row) => sum + row.spend, 0);
+      const awarenessFactor = haloResponse ?? Math.min(1.5, awarenessSpend / 12000);
+
+      let totSpend = 0;
+      let totChannelRev = 0;
+      let totIncRev = 0;
+      let totOrders = 0;
+      let totNewClients = 0;
+      let lowerFunnelRev = 0;
+
+      const byChannel = channels.map((row) => {
+        const effMult = row.isAwareness ? 1 : 1 + haloEff * awarenessFactor;
+        const roasEff = row.roas * effMult;
+        const channelRev = row.spend * roasEff;
+        const incRev = channelRev * row.inc;
+        const poasNetEur = incRev * netMargin - row.spend;
+        const ncRate = Math.min(0.95, row.baseNc + (row.isAwareness ? 0 : haloNc * awarenessFactor));
+        const orders = channelRev / row.aov;
+
+        totSpend += row.spend;
+        totChannelRev += channelRev;
+        totIncRev += incRev;
+        totOrders += orders;
+        totNewClients += orders * ncRate;
+        if (!row.isAwareness) lowerFunnelRev += channelRev;
+        return { roasEff, ncRate, poasNetEur };
+      });
+
+      const haloVolRev = (haloRevenueBase ?? lowerFunnelRev) * haloVol * awarenessFactor;
+      const haloVolIncRev = haloVolRev * 0.85;
+      const haloVolPoasEur = haloVolIncRev * netMargin;
+      const haloNcRate = Math.min(0.95, 0.72 + haloNc * awarenessFactor);
+      const haloOrders = haloVolRev / 125;
+      const grandTotalRev = totChannelRev + haloVolRev;
+      const grandTotalIncRev = totIncRev + haloVolIncRev;
+      const grandTotalOrders = totOrders + haloOrders;
+      const grandTotalNc = totNewClients + haloOrders * haloNcRate;
+      const totPoasEur = grandTotalIncRev * netMargin - totSpend;
+
+      return {
+        byChannel, haloVolRev, haloNcRate, haloVolPoasEur,
+        totSpend, grandTotalRev, grandTotalNc, totPoasEur,
+        composedRoas: totSpend > 0 ? grandTotalRev / totSpend : 0,
+        totPoasRatio: totSpend > 0 ? totPoasEur / totSpend : 0,
+        ncShare: grandTotalOrders > 0 ? grandTotalNc / grandTotalOrders : 0,
+        ncCpa: grandTotalNc > 0 ? totSpend / grandTotalNc : 0,
+        avgIncShare: grandTotalRev > 0 ? grandTotalIncRev / grandTotalRev : 0
+      };
+    }
+
+    function recalcMix() {
+      const costsPct = Number(fEls.costs.value);
+      const netMargin = 1 - costsPct / 100; // Part disponible après coûts produit/logistique/retours/frais
+      const haloVol = Number(fEls.haloVol.value) / 100;
+      const haloEff = Number(fEls.haloEff.value) / 100;
+      const haloNc = Number(fEls.haloNc.value) / 100;
+
+      document.getElementById("v-costs").textContent = costsPct + "%";
+      document.getElementById("v-halo-vol").textContent = "+" + Math.round(haloVol * 100) + "%";
+      document.getElementById("v-halo-eff").textContent = "+" + Math.round(haloEff * 100) + "%";
+      document.getElementById("v-halo-nc").textContent = "+" + Math.round(haloNc * 100) + " pts";
+
+      const {
+        byChannel, haloVolRev, haloNcRate, haloVolPoasEur, totSpend, grandTotalRev,
+        totPoasEur, composedRoas, totPoasRatio, ncShare, ncCpa, avgIncShare
+      } = calculateMix(channelsState, { netMargin, haloVol, haloEff, haloNc });
+
+      byChannel.forEach(({ roasEff, ncRate, poasNetEur }, idx) => {
+        const row = channelsState[idx];
+        document.getElementById(`cell-roas-eff-${idx}`).textContent = roasEff.toFixed(2) + "x";
+        document.getElementById(`cell-nc-${idx}`).textContent = Math.round(ncRate * 100) + "%";
+
+        const pCell = document.getElementById(`cell-poas-${idx}`);
+        pCell.textContent = (poasNetEur >= 0 ? "+" : "") + fmtEur(poasNetEur);
+        pCell.className = "num " + (poasNetEur >= 0 ? "pos" : "neg");
+
+        let badge = '<span class="badge badge-ok">Rentable</span>';
+        if (row.isAwareness) {
+          badge = row.spend > 0
+            ? '<span class="badge badge-ok">Effet indirect supposé</span>'
+            : '<span class="badge badge-bad">Sans effet indirect</span>';
+        } else if (poasNetEur < 0) {
+          badge = '<span class="badge badge-bad">Marge négative</span>';
+        } else if (row.spend > 0 && poasNetEur / row.spend < 0.15) {
+          badge = '<span class="badge badge-warn">Marge faible</span>';
+        }
+        document.getElementById(`cell-badge-${idx}`).innerHTML = badge;
+      });
+
+      document.getElementById("cell-halo-rev").textContent = "+" + fmtEur(haloVolRev);
+      document.getElementById("cell-halo-nc").textContent = Math.round(haloNcRate * 100) + "%";
+      document.getElementById("cell-halo-poas").textContent = "+" + fmtEur(haloVolPoasEur);
+
+      document.getElementById("mix-total").innerHTML = `
+        <tr class="total-row">
+          <td colspan="2">Total de l’exemple</td>
+          <td class="num">${fmtEur(totSpend)}</td>
+          <td class="num">—</td>
+          <td class="num">${composedRoas.toFixed(2)}x</td>
+          <td class="num">${Math.round(avgIncShare * 100)}%</td>
+          <td class="num">${Math.round(ncShare * 100)}%</td>
+          <td class="num ${totPoasEur >= 0 ? "pos" : "neg"}">${totPoasEur >= 0 ? "+" : ""}${fmtEur(totPoasEur)}</td>
+          <td></td>
+        </tr>
+      `;
+
+      document.getElementById("k-spend").textContent = fmtEur(totSpend);
+      document.getElementById("k-roas").textContent = composedRoas.toFixed(2) + "x";
+      document.getElementById("k-rev").textContent = "Revenu total : " + fmtEur(grandTotalRev);
+      document.getElementById("k-nc-share").textContent = Math.round(ncShare * 100) + "%";
+      document.getElementById("k-nc-cpa").textContent = "Coût par nouveau client · " + fmtEur(ncCpa);
+
+      const profEl = document.getElementById("k-profit");
+      profEl.textContent = (totPoasEur >= 0 ? "+" : "") + fmtEur(totPoasEur);
+      profEl.className = "value " + (totPoasEur >= 0 ? "pos" : "neg");
+      document.getElementById("k-poas-ratio").textContent =
+        "Marge par euro de publicité · " + (totPoasRatio >= 0 ? "+" : "") + totPoasRatio.toFixed(2) + "x";
+
+      // Met à jour la saturation si l'onglet 2 est ouvert
+      if (document.getElementById("saturation").classList.contains("active")) {
+        drawSaturation();
+      }
+    }
+
+    Object.values(fEls).forEach((el) => el.addEventListener("input", recalcMix));
+    document.getElementById("reset-mix").addEventListener("click", () => {
+      channelsState = JSON.parse(JSON.stringify(defaultChannels));
+      renderMixTable();
+    });
+    renderMixTable();
+
+    // =========================================================================
+    // ONGLET 2 : SATURATION & COÛT INCRÉMENTAL (1 MOIS / 1 SEMAINE / 1 JOUR)
+    // =========================================================================
+    const satData = {
+      shopping: {
+        name: "Google Shopping / PMax",
+        aov: 130,
+        month: { label: "1 Mois", unit: "k€/mois", step: 3, curve: [5.0, 4.8, 4.6, 4.4, 4.2, 4.0, 3.8, 3.6, 3.4, 3.2, 3.0, 2.8, 1.8, 1.4, 1.2, 1.0, 0.9, 0.8, 0.7, 0.6] },
+        week:  { label: "1 Semaine", unit: "k€/sem.", step: 0.75, curve: [5.2, 4.9, 4.7, 4.4, 4.1, 3.9, 3.6, 3.4, 3.1, 2.9, 1.9, 1.4, 1.1, 0.9, 0.8, 0.7, 0.6, 0.6, 0.5, 0.5] },
+        day:   { label: "1 Jour", unit: "€/jour", step: 120, curve: [5.5, 5.2, 4.9, 4.6, 4.3, 4.0, 3.7, 3.4, 3.0, 1.6, 1.1, 0.8, 0.7, 0.6, 0.5, 0.5, 0.4, 0.4, 0.4, 0.3] }
+      },
+      search: {
+        name: "Google Search Hors-Marque",
+        aov: 125,
+        month: { label: "1 Mois", unit: "k€/mois", step: 2, curve: [4.6, 4.4, 4.2, 4.0, 3.8, 3.6, 3.4, 3.2, 3.0, 2.9, 2.0, 1.5, 1.2, 1.0, 0.9, 0.8, 0.7, 0.6, 0.6, 0.5] },
+        week:  { label: "1 Semaine", unit: "k€/sem.", step: 0.5, curve: [4.8, 4.6, 4.3, 4.0, 3.8, 3.5, 3.3, 3.0, 2.8, 1.7, 1.3, 1.0, 0.8, 0.7, 0.6, 0.6, 0.5, 0.5, 0.4, 0.4] },
+        day:   { label: "1 Jour", unit: "€/jour", step: 80, curve: [5.1, 4.8, 4.5, 4.2, 3.9, 3.6, 3.2, 2.9, 1.5, 1.0, 0.8, 0.7, 0.6, 0.5, 0.5, 0.4, 0.4, 0.3, 0.3, 0.3] }
+      },
+      social: {
+        name: "Meta / Social Acquisition",
+        aov: 120,
+        month: { label: "1 Mois", unit: "k€/mois", step: 2.5, curve: [3.9, 3.8, 3.7, 3.6, 3.5, 3.3, 3.2, 3.1, 2.9, 2.8, 2.6, 2.1, 1.6, 1.3, 1.1, 1.0, 0.9, 0.8, 0.7, 0.7] },
+        week:  { label: "1 Semaine", unit: "k€/sem.", step: 0.6, curve: [4.1, 3.9, 3.8, 3.6, 3.4, 3.2, 3.0, 2.9, 2.7, 1.8, 1.4, 1.1, 0.9, 0.8, 0.7, 0.7, 0.6, 0.6, 0.5, 0.5] },
+        day:   { label: "1 Jour", unit: "€/jour", step: 100, curve: [4.3, 4.1, 3.9, 3.7, 3.5, 3.2, 3.0, 2.8, 1.6, 1.2, 0.9, 0.8, 0.7, 0.6, 0.6, 0.5, 0.5, 0.5, 0.4, 0.4] }
+      }
+    };
+
+    let currentWindow = "month";
+    const satChannelEl = document.getElementById("sat-channel");
+    const satEls = {
+      stepSpend: document.getElementById("step-spend"),
+      roasFloor: document.getElementById("roas-floor")
+    };
+
+    document.querySelectorAll("#window-selector .pill-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#window-selector .pill-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentWindow = btn.dataset.win;
+        drawSaturation();
+      });
+    });
+
+    satChannelEl.addEventListener("change", drawSaturation);
+    Object.values(satEls).forEach((el) => el.addEventListener("input", drawSaturation));
+
+    function drawSaturation() {
+      const ch = satData[satChannelEl.value];
+      const prof = ch[currentWindow];
+      const idx = Number(satEls.stepSpend.value) - 1;
+      const floor = Number(satEls.roasFloor.value);
+      const netMargin = getNetMarginRate();
+
+      const spendAtIdx = (idx + 1) * prof.step;
+      const spendLabel = currentWindow === "day"
+        ? Math.round(spendAtIdx) + " " + prof.unit
+        : spendAtIdx.toFixed(1).replace(".0", "") + " " + prof.unit;
+
+      document.getElementById("v-step-spend").textContent = spendLabel;
+      document.getElementById("v-roas-floor").textContent = floor.toFixed(1) + "x";
+      document.getElementById("sat-chart-title").textContent =
+        `${ch.name} — Ventes selon le budget (${prof.label})`;
+
+      const curMRoas = prof.curve[idx];
+      const mCpa = ch.aov / curMRoas;
+      const stepSpendEur = currentWindow === "day" ? prof.step : prof.step * 1000;
+      const mPoasEur = stepSpendEur * curMRoas * netMargin - stepSpendEur;
+
+      const mRoasEl = document.getElementById("k-mroas");
+      mRoasEl.textContent = curMRoas.toFixed(2) + "x";
+      mRoasEl.className = "value " + (curMRoas >= floor ? "pos" : "neg");
+
+      document.getElementById("k-mcpa").textContent = fmtEur(mCpa);
+      document.getElementById("k-mpoas").textContent =
+        "Marge de cette tranche · " + (mPoasEur >= 0 ? "+" : "") + fmtEur(mPoasEur);
+
+      const stopMsg = document.getElementById("k-stop-msg");
+      if (curMRoas < floor) {
+        stopMsg.textContent = "Sous le repère choisi";
+        stopMsg.style.color = "#f87171";
+      } else {
+        stopMsg.textContent = "Repère atteint";
+        stopMsg.style.color = "#4ade80";
+      }
+
+      const cumRev = [];
+      let acc = 0;
+      for (let i = 0; i < prof.curve.length; i++) {
+        acc += prof.step * prof.curve[i];
+        cumRev.push(acc);
+      }
+
+      const canvas = document.getElementById("satCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const pad = { top: 28, right: 56, bottom: 38, left: 54 };
+      const plotW = w - pad.left - pad.right;
+      const plotH = h - pad.top - pad.bottom;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const n = prof.curve.length;
+      const maxCum = Math.max(...cumRev) * 1.1;
+      const maxMR = 6.0;
+
+      const xFor = (i) => pad.left + (i / (n - 1)) * plotW;
+      const yCum = (v) => h - pad.bottom - (v / maxCum) * plotH;
+      const yMR = (r) => h - pad.bottom - (r / maxMR) * plotH;
+
+      // Zone rouge à partir du décrochage brutal
+      const breakIdx = prof.curve.findIndex((r) => r < floor);
+      if (breakIdx !== -1) {
+        const xStart = xFor(Math.max(0, breakIdx - 0.5));
+        ctx.fillStyle = "rgba(239, 68, 68, 0.14)";
+        ctx.fillRect(xStart, pad.top, w - pad.right - xStart, plotH);
+
+        ctx.strokeStyle = "#ef4444";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(xStart, pad.top);
+        ctx.lineTo(xStart, h - pad.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#f87171";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText("Moment d'arrêt", xStart + 6, pad.top + 14);
+      }
+
+      // Axes
+      ctx.strokeStyle = "#475569";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top);
+      ctx.lineTo(pad.left, h - pad.bottom);
+      ctx.lineTo(w - pad.right, h - pad.bottom);
+      ctx.stroke();
+
+      // Seuil plancher
+      const yFloor = yMR(floor);
+      ctx.strokeStyle = "#f59e0b";
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, yFloor);
+      ctx.lineTo(w - pad.right, yFloor);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(`Seuil ${floor.toFixed(1)}x`, w - pad.right - 52, yFloor - 5);
+
+      // Courbe Revenu cumulé
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const x = xFor(i), y = yCum(cumRev[i]);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Courbe ROAS marginal
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 2.3;
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const x = xFor(i), y = yMR(prof.curve[i]);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Points actifs
+      ctx.fillStyle = curMRoas >= floor ? "#22c55e" : "#ef4444";
+      ctx.beginPath();
+      ctx.arc(xFor(idx), yMR(curMRoas), 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(xFor(idx), yCum(cumRev[idx]), 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Revenu cumulé", 8, 16);
+      ctx.fillText("Ventes / €", w - 64, 16);
+      ctx.fillText(`Paliers (${prof.unit})`, w / 2 - 48, h - 10);
+    }
+
+    // =========================================================================
+    // ONGLET 3 : FICHES DÉCISION EN COLONNE (1, 2, 3...) TYPE TO-DO DIRECT
+    // =========================================================================
+    const todos = [
+      {
+        action: "Que se passerait-il si la marque achetait moins de publicité sur son propre nom ?",
+        detail: "Une partie des acheteurs pourrait la retrouver dans les résultats gratuits.",
+        guard: "Ventes totales issues des recherches",
+        owner: "Équipe marketing",
+        done: false
+      },
+      {
+        action: "À partir de quel budget Google Shopping rapporte-t-il moins par euro dépensé ?",
+        detail: "Un bon résultat moyen peut masquer une dernière tranche de budget peu productive.",
+        guard: "Ventes de la dernière tranche",
+        owner: "Équipe e-commerce",
+        done: false
+      },
+      {
+        action: "Quels signes montreraient que la campagne de notoriété crée de la demande ?",
+        detail: "Des recherches de marque ou de nouveaux visiteurs peuvent précéder les achats.",
+        guard: "Recherches, visites et nouveaux clients",
+        owner: "Équipe marque",
+        done: false
+      },
+      {
+        action: "Quelles publicités attirent des clients qui reviennent acheter ?",
+        detail: "Le coût du premier achat ne raconte qu’une partie de leur valeur.",
+        guard: "Marge au premier achat et au réachat",
+        owner: "Équipe clients",
+        done: false
+      }
+    ];
+
+    function renderTodos() {
+      const container = document.getElementById("todo-stack");
+      container.innerHTML = todos.map((t, i) => `
+        <div class="todo-row ${t.done ? "done" : ""}">
+          <div class="todo-num">${i + 1}</div>
+          <input type="checkbox" class="todo-checkbox" data-idx="${i}" ${t.done ? "checked" : ""} />
+          <div>
+            <div class="todo-action">${t.action}</div>
+            <div class="todo-detail">${t.detail}</div>
+          </div>
+          <div class="todo-meta">
+            <span class="meta-pill">${t.owner}</span>
+            <span class="badge badge-warn">${t.guard}</span>
+          </div>
+        </div>
+      `).join("");
+
+      document.querySelectorAll(".todo-checkbox").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+          const i = Number(e.target.dataset.idx);
+          todos[i].done = e.target.checked;
+          renderTodos();
+        });
+      });
+    }
+
+    document.getElementById("add-todo-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const action = document.getElementById("new-action").value.trim();
+      const guard = document.getElementById("new-guard").value.trim();
+      const owner = document.getElementById("new-owner").value.trim();
+      if (!action) return;
+      todos.push({
+        action,
+        detail: "Question ajoutée pendant la discussion.",
+        guard: guard || "Garde-fou à définir",
+        owner: owner || "À assigner",
+        done: false
+      });
+      e.target.reset();
+      renderTodos();
+    });
+
+    renderTodos();
+
+    const budgetControl = document.getElementById("demo-budget");
+    const thresholdControl = document.getElementById("demo-threshold");
+    const tractionChart = document.getElementById("traction-chart");
+    const maxDemoBudget = Number(budgetControl.max);
+    const fmtSignedEuro = new Intl.NumberFormat("fr-FR", {
+      style: "currency", currency: "EUR", maximumFractionDigits: 0, signDisplay: "exceptZero"
+    });
+    const fmtSignedCount = new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits: 0, signDisplay: "exceptZero"
+    });
+    const fmtBudgetK = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
+    const directOnly = { netMargin: 0.45, haloVol: 0, haloEff: 0, haloNc: 0 };
+    const demoBaseline = calculateMix(
+      defaultChannels.map((row) => row.isAwareness ? { ...row, spend: 0 } : row),
+      directOnly
+    );
+    const searchIndex = defaultChannels.findIndex((row) =>
+      row.channel === "Google Search" && row.funnel === "Conversion Hors-Marque"
+    );
+    const search = defaultChannels[searchIndex];
+
+    function searchNewCustomerCpa(mix) {
+      const { roasEff, ncRate } = mix.byChannel[searchIndex];
+      return search.aov / (roasEff * ncRate);
+    }
+
+    function simulateTraction(spend, threshold) {
+      const excess = Math.max(0, spend - threshold);
+      const haloResponse = Math.pow(excess / (excess + 7000), 1.5);
+      const transfer = document.getElementById("funding").value === "transfer";
+      const retainedShare = transfer ? 1 - spend / demoBaseline.totSpend : 1;
+      const channels = defaultChannels.map((row) => ({
+        ...row, spend: row.isAwareness ? spend : row.spend * retainedShare
+      }));
+      const direct = calculateMix(channels, directOnly);
+      const withHalo = calculateMix(channels, {
+        ...directOnly, haloVol: 0.25, haloEff: 0.18, haloNc: 0.12,
+        haloRevenueBase: demoBaseline.grandTotalRev * retainedShare, haloResponse
+      });
+      return {
+        spend,
+        contribution: withHalo.totPoasEur - demoBaseline.totPoasEur,
+        directContribution: direct.totPoasEur - demoBaseline.totPoasEur,
+        visits: withHalo.haloVolRev / (0.025 * 125),
+        searchCpa: searchNewCustomerCpa(withHalo)
+      };
+    }
+
+    function sampleTraction(threshold) {
+      return Array.from({ length: maxDemoBudget / 250 + 1 }, (_, i) => simulateTraction(i * 250, threshold));
+    }
+
+    function findBreakEven(points, threshold) {
+      const firstPositive = points.findIndex(({ spend, contribution }) => spend > threshold && contribution >= 0);
+      if (firstPositive === -1) return null;
+      let low = points[firstPositive - 1].spend;
+      let high = points[firstPositive].spend;
+      while (high - low > 1) {
+        const midpoint = (low + high) / 2;
+        if (simulateTraction(midpoint, threshold).contribution >= 0) high = midpoint;
+        else low = midpoint;
+      }
+      return Math.round(high);
+    }
+
+    function drawTractionChart(points, active, threshold, breakEven) {
+      const width = tractionChart.clientWidth;
+      const height = tractionChart.clientHeight;
+      if (!width || !height) return;
+
+      const pixelRatio = window.devicePixelRatio || 1;
+      tractionChart.width = Math.round(width * pixelRatio);
+      tractionChart.height = Math.round(height * pixelRatio);
+      const ctx = tractionChart.getContext("2d");
+      ctx.scale(pixelRatio, pixelRatio);
+      const plot = { left: 52, right: width - 16, top: 16, bottom: height - 44 };
+      const step = 4000;
+      const min = step * Math.floor(Math.min(...points.map((point) => point.directContribution)) / step);
+      const max = Math.max(step, step * Math.ceil(Math.max(...points.map((point) => point.contribution)) / step));
+      const x = (spend) => plot.left + spend / maxDemoBudget * (plot.right - plot.left);
+      const y = (contribution) => plot.bottom - (contribution - min) / (max - min) * (plot.bottom - plot.top);
+
+      function stroke(x1, y1, x2, y2, color, dash = []) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash(dash);
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      function drawSeries(key, color, weight, dash = []) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = weight;
+        ctx.setLineDash(dash);
+        points.forEach((point, i) => {
+          if (i === 0) ctx.moveTo(x(point.spend), y(point[key]));
+          else ctx.lineTo(x(point.spend), y(point[key]));
+        });
+        ctx.stroke();
+      }
+
+      function marker(spend, contribution, color, radius) {
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = "#1b1527";
+        ctx.lineWidth = 2;
+        ctx.fillStyle = color;
+        ctx.arc(x(spend), y(contribution), radius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      ctx.font = "11px system-ui, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let tick = min; tick <= max; tick += step) {
+        const row = y(tick);
+        stroke(plot.left, row, plot.right, row, tick === 0 ? "#89759d" : "#493859");
+        ctx.fillStyle = "#c0b5ce";
+        ctx.fillText(tick === 0 ? "0 €" : fmtBudgetK.format(tick / 1000) + " k€", plot.left - 7, row);
+      }
+
+      ctx.textAlign = "center";
+      ctx.fillText("Budget de notoriété / mois", (plot.left + plot.right) / 2, height - 7);
+      for (let tick = 0; tick <= maxDemoBudget; tick += 6000) {
+        ctx.fillText(tick === 0 ? "0 €" : fmtBudgetK.format(tick / 1000) + " k€", x(tick), plot.bottom + 14);
+      }
+
+      stroke(x(threshold), plot.top, x(threshold), plot.bottom, "#ffbf8f", [3, 4]);
+      stroke(x(active.spend), plot.top, x(active.spend), plot.bottom, "#c6a8ff", [2, 5]);
+      drawSeries("directContribution", "#ada1bd", 1.5, [5, 5]);
+      drawSeries("contribution", "#c6a8ff", 3);
+      if (breakEven !== null) marker(breakEven, 0, "#8fdfbb", 5);
+      marker(active.spend, active.contribution, "#f6eaff", 6);
+    }
+
+    function updateDemo() {
+      const spend = Number(budgetControl.value);
+      const threshold = Number(thresholdControl.value);
+      const points = sampleTraction(threshold);
+      const breakEven = findBreakEven(points, threshold);
+      const active = simulateTraction(spend, threshold);
+      const transfer = document.getElementById("funding").value === "transfer";
+      const remaining = demoBaseline.totSpend - (transfer ? spend : 0);
+      document.getElementById("allocation").textContent = "Total " + fmtEur(remaining + spend) +
+        " · Autres leviers " + fmtEur(remaining) + (transfer ? " · Chaque autre canal cède la même proportion de son budget." : "");
+      const searchCpaBaseline = searchNewCustomerCpa(demoBaseline);
+
+      document.getElementById("demo-budget-value").textContent = fmtEur(spend);
+      document.getElementById("demo-threshold-value").textContent = fmtEur(threshold);
+      document.getElementById("demo-breakeven").textContent = breakEven === null
+        ? "Non atteint dans la plage testée"
+        : "≈ " + fmtEur(Math.round(breakEven / 100) * 100);
+
+      const contribution = document.getElementById("demo-contribution");
+      contribution.textContent = fmtSignedEuro.format(Math.round(active.contribution));
+      contribution.classList.toggle("pos", active.contribution >= 0);
+      contribution.classList.toggle("neg", active.contribution < 0);
+      document.getElementById("demo-visits").textContent = fmtSignedCount.format(Math.round(active.visits));
+      document.getElementById("demo-search-cpa").textContent = fmtEur(active.searchCpa);
+      document.getElementById("demo-search-baseline").textContent = "Référence " + fmtEur(searchCpaBaseline);
+
+      let verdict = "À ce budget, l’exemple compte uniquement les ventes directes de la campagne.";
+      if (spend === 0) verdict = "Référence à 0 € en notoriété. Les autres leviers conservent le même budget.";
+      if (spend === threshold) verdict = "Voici le seuil choisi pour l’exemple. Au-delà, les autres canaux commencent aussi à bénéficier de la campagne.";
+      if (spend > threshold) verdict = "Les visites augmentent et recruter un client sur Google coûte moins cher. La marge reste inférieure à celle du scénario de départ.";
+      if (spend > threshold && active.contribution >= 0) {
+        verdict = "Dans cet exemple, les ventes supplémentaires permettent de retrouver ou de dépasser la marge du scénario de départ.";
+      }
+      document.getElementById("demo-verdict").textContent = verdict;
+
+      drawTractionChart(points, active, threshold, breakEven);
+    }
+
+    document.getElementById("funding").addEventListener("change", updateDemo);
+    [budgetControl, thresholdControl].forEach((control) => control.addEventListener("input", updateDemo));
+    document.getElementById("demo-before").addEventListener("click", () => {
+      budgetControl.value = Number(thresholdControl.value) - 2000;
+      updateDemo();
+    });
+    document.getElementById("demo-after").addEventListener("click", () => {
+      const threshold = Number(thresholdControl.value);
+      const points = sampleTraction(threshold);
+      const breakEven = findBreakEven(points, threshold);
+      const target = Math.max(threshold + 4000, (breakEven ?? 0) + 2500);
+      budgetControl.value = Math.min(maxDemoBudget, 500 * Math.ceil(target / 500));
+      updateDemo();
+    });
+    new ResizeObserver(updateDemo).observe(tractionChart);
+
+    const pilotButton = document.getElementById("pilot-button");
+    const pilotDetails = document.getElementById("demo-pilot");
+    pilotButton.addEventListener("click", () => {
+      pilotDetails.hidden = !pilotDetails.hidden;
+      pilotButton.setAttribute("aria-expanded", String(!pilotDetails.hidden));
+    });
+
+    updateDemo();
+  </script>
+<footer class="container"><p class="note"><a href="/">Accueil Arivoli</a> · <a href="/priorites.html#notoriete">Mesurer la demande créée</a> · <a href="/priorites.html#marginal">Évaluer le prochain euro investi</a></p></footer></body>
+</html>

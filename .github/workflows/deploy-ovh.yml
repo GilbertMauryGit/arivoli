@@ -88,6 +88,9 @@ jobs:
             -o ConnectTimeout=15 \
             -P 22 arivolifth@ftp.cluster129.hosting.ovh.net <<'SFTP'
           cd www
+          -mkdir demo
+          put demo/index.html demo/.index.html.upload
+          rename demo/.index.html.upload demo/index.html
           -mkdir assets
           put assets/arivoli.svg assets/.arivoli.svg.upload
           rename assets/.arivoli.svg.upload assets/arivoli.svg
@@ -126,7 +129,7 @@ jobs:
       - name: Vérifier le site publié
         if: steps.config.outputs.ready == 'true'
         run: |
-          for page in index.html priorites.html gilbert-maury.html {en,zh}/{index,priorites,gilbert-maury}.html assets/cohorte.js assets/editorial.css robots.txt sitemap.xml; do
+          for page in demo/index.html index.html priorites.html gilbert-maury.html {en,zh}/{index,priorites,gilbert-maury}.html assets/cohorte.js assets/editorial.css robots.txt sitemap.xml; do
             public_path="$page"
             public_path="${page%index.html}"
             curl --location --fail --silent --show-error --max-time 25 "https://arivoli.fr/$public_path?revision=$GITHUB_SHA" -o "$RUNNER_TEMP/live.html"
